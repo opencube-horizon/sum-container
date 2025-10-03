@@ -33,7 +33,7 @@ file_name=engine.log
 log_format=type3
 
 [Web]
-virtual_path=/assets
+virtual_path=/opt/sum/bin/assets
 
 [rpm]
 nodeps=false
@@ -42,7 +42,7 @@ else
     echo "Ignoring any set environment variables because /opt/sum/bin/sum.ini has been provided"
 fi
 
-[ -n "${SUM_ROOT_PASSWORD_FILE}" ] &&  echo "root:$(<${SUM_ROOT_PASSWORD_FILE})" | chpasswd
-[ -n "${SUM_ROOT_PASSWORD}" ] && echo "root:${SUM_ROOT_PASSWORD}" | chpasswd
+[ -n "${SUM_ROOT_PASSWORD_FILE:-}" ] &&  echo "root:$(<${SUM_ROOT_PASSWORD_FILE})" | chpasswd
+[ -n "${SUM_ROOT_PASSWORD:-}" ] && echo "root:${SUM_ROOT_PASSWORD}" | chpasswd
 
 exec /opt/sum/bin/x64/sum_service_x64
