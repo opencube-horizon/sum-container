@@ -19,7 +19,7 @@ RUN set -ex ; \
         "sum==${SUM_V}" \
     ; \
     rm -rf /var/cache/zypp/* ; \
-    printf '#!/bin/sh\nexit 0\n' > /usr/bin/firefox && chmod +x /usr/bin/firefox
+    printf '#!/bin/sh\necho "Browser launch suppressed (container mode): $*"\n' > /usr/bin/firefox && chmod +x /usr/bin/firefox
 
 VOLUME /assets
 VOLUME /data
