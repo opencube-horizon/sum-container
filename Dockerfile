@@ -14,7 +14,7 @@ RUN set -ex ; \
     rpm --import https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key2.pub ; \
     zypper ar https://downloads.linux.hpe.com/SDR/repo/sum/suse/15/x86_64/current/ sum ; \
     zypper ref sum ; \
-    zypper in -y \
+    zypper in -y --no-recommends \
         rsync lftp wget \
         "sum==${SUM_V}" \
     ; \
