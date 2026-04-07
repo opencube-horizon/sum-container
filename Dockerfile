@@ -2,6 +2,12 @@ FROM opensuse/leap:15.6
 
 ARG SUM_V
 
+LABEL org.opencontainers.image.title="SUM Container" \
+      org.opencontainers.image.description="HPE Smart Update Manager in a container" \
+      org.opencontainers.image.version="${SUM_V}" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.source="https://github.com/opencube-horizon/sum-container"
+
 RUN set -ex ; \
     rpm --import https://downloads.linux.hpe.com/SDR/hpPublicKey2048_key1.pub ; \
     rpm --import https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub ; \
