@@ -53,3 +53,13 @@ To mirror a baseline into the `/assets` volume:
 
 This uses `lftp` to mirror the SDR repository into `/assets/spp-gen10/2025.09.00.00`.
 Run the script without arguments to see available baselines already mirrored.
+
+## Security
+
+The root password for SUM's web interface can be set via two mechanisms:
+
+  - `SUM_ROOT_PASSWORD` — plain-text environment variable (convenient for development)
+  - `SUM_ROOT_PASSWORD_FILE` — path to a file containing the password (recommended for production)
+
+If both are set, `SUM_ROOT_PASSWORD_FILE` takes precedence.
+For production deployments, prefer `SUM_ROOT_PASSWORD_FILE` with container secrets to avoid exposing the password in environment variables (visible via `podman inspect`).
