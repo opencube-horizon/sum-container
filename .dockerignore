@@ -7,4 +7,7 @@ auto-save-list
 tramp
 .\#*
 
+.git
 Makefile
+README.md
+LICENSE
