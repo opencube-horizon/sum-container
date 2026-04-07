@@ -45,4 +45,9 @@ fi
 [ -n "${SUM_ROOT_PASSWORD:-}" ] && echo "root:${SUM_ROOT_PASSWORD}" | chpasswd
 [ -n "${SUM_ROOT_PASSWORD_FILE:-}" ] &&  echo "root:$(<${SUM_ROOT_PASSWORD_FILE})" | chpasswd
 
+if [ -z "${SUM_ROOT_PASSWORD:-}" ] && [ -z "${SUM_ROOT_PASSWORD_FILE:-}" ] ; then
+    echo "WARNING: Neither SUM_ROOT_PASSWORD nor SUM_ROOT_PASSWORD_FILE is set." >&2
+    echo "         The default root password will be used, which is insecure." >&2
+fi
+
 exec /opt/sum/bin/x64/sum_service_x64
