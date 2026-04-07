@@ -52,6 +52,9 @@ fi
 
 unset SUM_ROOT_PASSWORD SUM_ROOT_PASSWORD_FILE
 
+mkdir -p /data/sum
+ln -sf /dev/stdout /data/sum/engine.log
+
 /opt/sum/bin/x64/sum_service_x64 &
 SUM_PID=$!
 trap '/opt/sum/bin/x64/sum_bin_x64 shutdownengine; wait $SUM_PID' SIGTERM
