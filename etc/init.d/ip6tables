@@ -1,0 +1,25 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:       ip6tables
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Description:    Stub — ip6tables is not used in this container
+### END INIT INFO
+
+# LSB exit codes for "status":
+#   0 = running
+#   3 = program is not running
+# SUM's firewall detection calls "service ip6tables status" and treats
+# anything other than exit 3 as "firewall is running".
+
+case "$1" in
+    status)
+        echo "ip6tables: not running (stub)"
+        exit 3
+        ;;
+    *)
+        exit 0
+        ;;
+esac

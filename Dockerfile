@@ -15,7 +15,7 @@ RUN set -ex ; \
     zypper ar https://downloads.linux.hpe.com/SDR/repo/sum/suse/15/x86_64/current/ sum ; \
     zypper ref sum ; \
     zypper in -y --no-recommends \
-        rsync lftp wget \
+        rsync lftp wget tar \
         "sum==${SUM_V}" \
     ; \
     rm -rf /var/cache/zypp/*
