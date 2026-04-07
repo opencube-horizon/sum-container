@@ -20,7 +20,7 @@ Please note: there is a delay between a new release of SUM (or actually any soft
 
 This container defines 2 volumes:
 
-  - `/data` for for logs, session data, etc.
+  - `/data` for logs, session data, etc.
   - `/assets` for the baseline images
   
 It would be best to pre-create them to have them properly named:
