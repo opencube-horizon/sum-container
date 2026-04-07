@@ -53,9 +53,24 @@ fi
 unset SUM_ROOT_PASSWORD SUM_ROOT_PASSWORD_FILE
 
 mkdir -p /data/sum
-ln -sf /dev/stdout /data/sum/engine.log
 
-/opt/sum/bin/x64/sum_service_x64 &
-SUM_PID=$!
-trap '/opt/sum/bin/x64/sum_bin_x64 shutdownengine; wait $SUM_PID' SIGTERM
-wait $SUM_PID
+/opt/sum/bin/x64/sum_bin_x64 || true
+
+SUM_PID=$(pgrep -x sum_service_x64)
+
+shutdown() {
+    echo "SIGTERM received, shutting down SUM engine..."
+    /opt/sum/bin/x64/sum_bin_x64 shutdownengine
+    exit 0
+}
+trap shutdown SIGTERM SIGINT
+
+if [ -n "$SUM_PID" ]; then
+    while kill -0 "$SUM_PID" 2>/dev/null; do
+        sleep 5 &
+        wait $! || true
+    done
+else
+    echo "ERROR: sum_service_x64 is not running" >&2
+    exit 1
+fi

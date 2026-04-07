@@ -15,10 +15,11 @@ RUN set -ex ; \
     zypper ar https://downloads.linux.hpe.com/SDR/repo/sum/suse/15/x86_64/current/ sum ; \
     zypper ref sum ; \
     zypper in -y --no-recommends \
-        rsync lftp wget tar \
+        rsync lftp wget tar tini \
         "sum==${SUM_V}" \
     ; \
-    rm -rf /var/cache/zypp/*
+    rm -rf /var/cache/zypp/* ; \
+    printf '#!/bin/sh\nexit 0\n' > /usr/bin/firefox && chmod +x /usr/bin/firefox
 
 VOLUME /assets
 VOLUME /data
@@ -27,6 +28,6 @@ EXPOSE 63001
 EXPOSE 63002
 
 COPY . /
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD wget -q --spider --no-check-certificate https://localhost:63002/ || exit 1
-ENTRYPOINT ["/entrypoint.sh"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD /opt/sum/bin/x64/sum_bin_x64 getenginestatus 2>&1 | grep -q "Engine status:.*running"
+ENTRYPOINT ["/tini", "--", "/entrypoint.sh"]
