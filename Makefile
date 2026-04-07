@@ -16,5 +16,7 @@ PUSH_ARG := $(if $(findstring docker,$(CMD)),--push=${PUSH},)
 # docker uses "buildx build", podman uses plain "build"
 BUILD_CMD := $(if $(findstring docker,$(CMD)),buildx build,build)
 
-build: Dockerfile
+.PHONY: build
+
+build: Dockerfile entrypoint.sh mirror.sh
 	$(CMD) $(BUILD_CMD) --build-arg SUM_V=$(VER) $(PUSH_ARG) -t $(IMAGE):$(VER)-$(REV) .
