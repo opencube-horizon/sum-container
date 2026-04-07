@@ -43,3 +43,13 @@ Example with Podman secrets:
       -e SUM_ROOT_PASSWORD_FILE=/run/secrets/sum-password \
       -v sum-assets:/assets -v sum-data:/data \
       sum:12.2.0-0
+
+## Mirroring Baselines
+
+The container includes a `mirror.sh` script to download HPE SDR baselines for offline use with SUM.
+To mirror a baseline into the `/assets` volume:
+
+    podman exec sum /mirror.sh spp-gen10/2025.09.00.00
+
+This uses `lftp` to mirror the SDR repository into `/assets/spp-gen10/2025.09.00.00`.
+Run the script without arguments to see available baselines already mirrored.
