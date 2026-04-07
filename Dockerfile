@@ -21,4 +21,6 @@ EXPOSE 63001
 EXPOSE 63002
 
 COPY . /
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD wget -q --spider --no-check-certificate https://localhost:63002/ || exit 1
 ENTRYPOINT ["/entrypoint.sh"]
