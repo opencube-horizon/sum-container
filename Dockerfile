@@ -29,5 +29,5 @@ EXPOSE 63002
 
 COPY . /
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD /opt/sum/bin/x64/sum_bin_x64 getenginestatus 2>&1 | grep -q "Engine status:.*running"
+    CMD curl -sfk https://localhost:63002/ -o /dev/null
 ENTRYPOINT ["/tini", "--", "/entrypoint.sh"]

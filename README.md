@@ -63,3 +63,44 @@ The root password for SUM's web interface can be set via two mechanisms:
 
 If both are set, `SUM_ROOT_PASSWORD_FILE` takes precedence.
 For production deployments, prefer `SUM_ROOT_PASSWORD_FILE` with container secrets to avoid exposing the password in environment variables (visible via `podman inspect`).
+
+## HPE Appliance ISO
+
+The `iso/` subdirectory builds a minimal bootable ISO containing HPE Agentless Management Service (amsd) and Integrated Smart Update Tools (iSUT).
+Boot it via iLO Virtual Media so SUM can inventorise and update firmware/drivers through the iLO CHIF channel — no network required on the target server.
+
+### Building the ISO
+
+    make -C iso iso
+
+This runs a KIWI build via `docker buildx` using the `docker-container` driver with BuildKit's `security.insecure` entitlement (no `--privileged` required).
+A buildx builder named `kiwi` is created automatically on first run.
+Output lands in `iso/build/result/`.
+
+Override versions:
+
+    make -C iso iso VER=1.1.0 SPP=2026.03.00.00
+
+| Variable | Default        | Description                              |
+|----------|----------------|------------------------------------------|
+| `VER`    | `1.0.0`        | Synthetic ISO version (semver)           |
+| `REV`    | `0`            | Build revision                           |
+| `SPP`    | `2026.03.00.00`| HPE SPP baseline (pins package versions) |
+| `AMSD_V` | `4.6.0`        | Expected amsd version (informational)    |
+| `SUT_V`  | `6.6.0`        | Expected sut version (informational)     |
+
+### Versioning
+
+The ISO uses a synthetic semver (`VER`) decoupled from HPE package versions.
+The SPP baseline date pins the actual amsd/sut versions.
+A version mapping is embedded in the ISO at `/etc/hpe-iso-version` and can also be generated as `build/manifest.yaml`:
+
+    make -C iso manifest
+
+KIWI automatically produces a `.packages` file alongside the ISO containing the full RPM bill of materials.
+
+### Remote builders
+
+Point `DOCKER_HOST` at a remote Docker engine to offload the build:
+
+    make -C iso iso DOCKER_HOST=tcp://builder.example.com:2376

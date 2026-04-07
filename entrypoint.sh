@@ -54,4 +54,23 @@ unset SUM_ROOT_PASSWORD SUM_ROOT_PASSWORD_FILE
 
 mkdir -p /data/sum
 
-exec /opt/sum/bin/x64/sum_bin_x64
+case "${1:-}" in
+    clean-cache)
+        echo "Cleaning SUM cache in /data/sum ..."
+        rm -rf /data/sum/baseline
+        rm -f  /data/sum/sum.pdb /data/sum/sum.pdb-wal /data/sum/sum.pdb-shm
+        rm -f  /data/sum/sum_remote.pdb
+        # Remove version-numbered directories (e.g. 12_5_0_20)
+        find /data/sum -maxdepth 1 -type d -regex '.*/[0-9]+_[0-9]+_[0-9]+_[0-9]+' -exec rm -rf {} +
+        echo "Done. Restart the container to launch SUM with a clean state."
+        exit 0
+        ;;
+    "")
+        exec /opt/sum/bin/x64/sum_bin_x64
+        ;;
+    *)
+        echo "Unknown command: $1" >&2
+        echo "Usage: <container> [clean-cache]" >&2
+        exit 1
+        ;;
+esac

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Minimal HPE management appliance for iLO Virtual Media boot.
+    Contains amsd and iSUT for SUM-driven firmware/driver updates.
+
+    Placeholders (substituted by Makefile at build time):
+      __VERSION__       - ISO semver from Makefile VER
+      __SPP_BASELINE__  - HPE SPP dated baseline from Makefile SPP
+-->
+<image schemaversion="7.4" name="hpe-appliance">
+    <description type="system">
+        <author>OpenCUBE</author>
+        <contact>opencube@example.com</contact>
+        <specification>
+            Minimal HPE management appliance for iLO Virtual Media boot.
+            Bundles amsd and iSUT so SUM can inventorise and update
+            firmware/drivers via the iLO CHIF channel.
+        </specification>
+    </description>
+
+    <preferences>
+        <version>__VERSION__</version>
+        <packagemanager>zypper</packagemanager>
+        <rpm-excludedocs>true</rpm-excludedocs>
+        <type image="iso"
+              primary="true"
+              firmware="efi"
+              mediacheck="false"
+              kernelcmdline="console=tty0 console=ttyS1,115200n8 quiet">
+            <bootloader name="grub2" timeout="10"/>
+        </type>
+    </preferences>
+
+    <!-- openSUSE Leap 16 base repositories -->
+    <repository type="rpm-md" alias="leap-oss" imageinclude="false">
+        <source path="https://download.opensuse.org/distribution/leap/16.0/repo/oss/"/>
+    </repository>
+    <!-- No update repo for Leap 16.0 yet; add back when available -->
+
+    <!--
+        HPE SPP Gen10 for SLES16 — pinned to a dated baseline.
+        GPG checking disabled; we trust the HTTPS transport to HPE SDR.
+    -->
+    <repository type="rpm-md" alias="spp-gen10"
+                repository_gpgcheck="false"
+                package_gpgcheck="false"
+                imageinclude="false">
+        <source path="https://downloads.linux.hpe.com/SDR/repo/spp-gen10/suse/SLES16/x86_64/__SPP_BASELINE__/"/>
+    </repository>
+
+    <packages type="image">
+        <!-- Boot infrastructure -->
+        <package name="kernel-default"/>
+        <package name="dracut"/>
+        <package name="dracut-kiwi-live"/>
+        <package name="grub2"/>
+        <package name="grub2-x86_64-efi"/>
+        <package name="shim"/>
+
+        <!-- Init system + network (dracut kiwi-live needs network-legacy) -->
+        <package name="systemd"/>
+        <package name="wicked"/>
+
+        <!-- Core utilities (minimal) -->
+        <package name="bash"/>
+        <package name="coreutils"/>
+        <package name="procps"/>
+        <package name="less"/>
+        <package name="iproute2"/>
+
+        <!-- amsd dependencies (explicit) -->
+        <package name="pciutils"/>
+        <package name="lsof"/>
+
+        <!-- sut dependencies (explicit) -->
+        <package name="dmidecode"/>
+        <package name="gawk"/>
+        <package name="grep"/>
+        <package name="sed"/>
+        <package name="openssl"/>
+        <package name="rpm"/>
+        <package name="kmod"/>
+
+        <!-- HPE packages -->
+        <package name="amsd"/>
+        <!-- sut is installed in config.sh with rpm noscripts flag because its
+             prein scriptlet runs DetectILO which fails without real hardware. -->
+    </packages>
+
+    <packages type="bootstrap">
+        <package name="filesystem"/>
+        <package name="glibc-locale-base"/>
+        <package name="ca-certificates-mozilla"/>
+        <package name="Leap-release"/>
+    </packages>
+</image>
