@@ -22,7 +22,7 @@ remotenode_heartbeat_elapsed_time=20
 
 [HTTP]
 certificate_duration=7
-port=${PORT:=63001}
+port=${PORT:-63001}
 ssl_port=${SSL_PORT:-63002}
 webserver_log=false
 
