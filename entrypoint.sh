@@ -50,4 +50,6 @@ if [ -z "${SUM_ROOT_PASSWORD:-}" ] && [ -z "${SUM_ROOT_PASSWORD_FILE:-}" ] ; the
     echo "         The default root password will be used, which is insecure." >&2
 fi
 
+unset SUM_ROOT_PASSWORD SUM_ROOT_PASSWORD_FILE
+
 exec /opt/sum/bin/x64/sum_service_x64
