@@ -1,5 +1,5 @@
 
-VER := 12.2.0
+VER := 12.5.0
 REV := 0
 PUSH := false
 REGISTRY :=
