@@ -19,5 +19,5 @@ if [ "$#" -ne 1 ] ; then
     exit 1
 fi
 
-exec lftp -c mirror -x 'vmw/$' --parallel=5 "https://downloads.linux.hpe.com/SDR/repo/$1" "/assets/$1"
+lftp -c mirror -x 'vmw/$' --parallel=5 "https://downloads.linux.hpe.com/SDR/repo/$1" "/assets/$1"
 list_baseline_locations
