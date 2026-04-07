@@ -28,9 +28,9 @@ It would be best to pre-create them to have them properly named:
     podman volume create sum-assets
     podman volume create sum-data
     
-To start the container:
+To start the container (substitute `podman` with `docker` if needed):
 
-    docker run --name sum -d -p 63001:63001 -p 63002:63002 -e SUM_ROOT_PASSWORD=my-secret -v sum-assets:/assets -v sum-data:/data sum:12.2.0-0
+    podman run --name sum -d -p 63001:63001 -p 63002:63002 -e SUM_ROOT_PASSWORD=my-secret -v sum-assets:/assets -v sum-data:/data sum:12.2.0-0
     
 The entrypoint script also supports `SUM_ROOT_PASSWORD_FILE` if you want to leverage secret files.
 Example with Podman secrets:
