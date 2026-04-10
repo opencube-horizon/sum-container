@@ -29,13 +29,31 @@ zypper clean -a
 systemctl enable amsd.service
 
 # HPE Integrated Smart Update Tools
-# The service name varies by package version; try known names.
-systemctl enable sut.service 2>/dev/null \
-    || systemctl enable hpsut.service 2>/dev/null \
-    || echo "WARNING: could not enable sut service — check unit name" >&2
+# The sut RPM drops its service file at /opt/sut/scripts/sut.service but never
+# installs it into systemd paths.  Write a custom unit calling sut directly
+# instead of using HPE's sutd wrapper script.
+cat > /usr/lib/systemd/system/sut.service <<'UNIT'
+[Unit]
+Description=HPE Integrated Smart Update Tools (iSUT)
+After=network.target amsd.service
 
-# Serial console on iLO Virtual Serial Port (ttyS1 on Gen10+)
-systemctl enable serial-getty@ttyS1.service
+[Service]
+Type=simple
+ExecStart=/opt/sut/bin/sut /svc
+# Register iSUT provider values in iLO RIS so SUM can detect it.
+ExecStartPost=/opt/sut/bin/sut -register
+ExecStartPost=/opt/sut/bin/sut -set mode=AutoDeployReboot
+ExecStop=/opt/sut/bin/sut /deregister
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+mkdir -p /etc/init.d /etc/rc.d/rc3.d /etc/rc.d/rc5.d /etc/rc.d/rc6.d
+systemctl enable sut.service
+
+# Serial console on iLO Virtual Serial Port (ttyS0 on Gen10+)
+systemctl enable serial-getty@ttyS0.service
 
 # Boot target — no GUI
 systemctl set-default multi-user.target
@@ -44,11 +62,11 @@ systemctl set-default multi-user.target
 # System configuration
 #----------------------------------------------------------------------
 
-passwd -l root
+passwd -d root
 
-# Autologin root on iLO Virtual Serial Port (ttyS1 on Gen10+)
-mkdir -p /etc/systemd/system/serial-getty@ttyS1.service.d
-cat > /etc/systemd/system/serial-getty@ttyS1.service.d/autologin.conf <<EOF
+# Autologin root on iLO Virtual Serial Port (ttyS0 on Gen10+)
+mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d
+cat > /etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf <<EOF
 [Service]
 ExecStart=
 ExecStart=-/sbin/agetty --autologin root --noclear %I 115200 linux

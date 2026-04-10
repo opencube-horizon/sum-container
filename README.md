@@ -73,8 +73,16 @@ Boot it via iLO Virtual Media so SUM can inventorise and update firmware/drivers
 
     make -C iso iso
 
-This runs a KIWI build via `docker buildx` using the `docker-container` driver with BuildKit's `security.insecure` entitlement (no `--privileged` required).
-A buildx builder named `kiwi` is created automatically on first run.
+The Makefile auto-detects whether Docker or Podman is available and selects the appropriate build path:
+
+- **Docker**: Uses `docker buildx` with the `docker-container` driver and BuildKit's `security.insecure` entitlement. A buildx builder named `kiwi` is created automatically on first run.
+- **Podman**: Builds the KIWI tooling image with `podman build --target build-env`, then runs KIWI inside a `podman run --privileged` container. This two-step approach is necessary because Podman cannot grant loop-device access during build.
+
+To force a specific engine:
+
+    make -C iso iso-docker
+    make -C iso iso-podman
+
 Output lands in `iso/build/result/`.
 
 Override versions:
@@ -99,8 +107,8 @@ A version mapping is embedded in the ISO at `/etc/hpe-iso-version` and can also 
 
 KIWI automatically produces a `.packages` file alongside the ISO containing the full RPM bill of materials.
 
-### Remote builders
+### Remote builders (Docker only)
 
 Point `DOCKER_HOST` at a remote Docker engine to offload the build:
 
-    make -C iso iso DOCKER_HOST=tcp://builder.example.com:2376
+    make -C iso iso-docker DOCKER_HOST=tcp://builder.example.com:2376
