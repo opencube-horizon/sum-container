@@ -8,7 +8,8 @@ PROJECT :=
 IMAGE := $(if $(REGISTRY),$(REGISTRY)/)$(if $(PROJECT),$(PROJECT)/)sum
 
 # use Podman if available, otherwise Docker
-CMD := $(if $(shell command -v podman 2>/dev/null),podman,docker)
+# Trailing ; defeats GNU Make ≤4.3 optimisation — see https://savannah.gnu.org/bugs/?57625
+CMD := $(if $(shell command -v podman 2>/dev/null ;),podman,docker)
 
 # when using docker, pass --push=$(PUSH) to buildx command
 PUSH_ARG := $(if $(findstring docker,$(CMD)),--push=${PUSH},)

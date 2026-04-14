@@ -9,7 +9,11 @@ IMAGE       := hpe-appliance
 BUILDX_NAME := kiwi
 KIWI_IMAGE  := kiwi-build
 
-CMD := $(if $(shell command -v podman 2>/dev/null),podman,docker)
+# Detect container engine: prefer podman, fall back to docker.
+# Trailing ; defeats GNU Make ≤4.3 optimisation that skips the shell
+# for simple commands — command(1) is a shell builtin, not a binary
+# on many systems.  See https://savannah.gnu.org/bugs/?57625
+CMD := $(if $(shell command -v podman 2>/dev/null ;),podman,docker)
 
 DESCRIPTION := $(CURDIR)/build/description
 RESULT      := $(CURDIR)/build/result
